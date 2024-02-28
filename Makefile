@@ -1,5 +1,5 @@
 APP_VERSION = $(shell git describe --abbrev=0 --tags)
-GIT_COMMIT = $(shell git rev-parse --short HEAD)
+GIT_COMMIT = $(shell git rev-parse --short HEAD~1)
 BUILD_DATE = $(shell date -u "+%Y%m%d-%H%M")
 COSMOS_VERSION_PKG = github.com/cosmos/cosmos-sdk/version
 COSMOS_VERSION_NAME = injective
@@ -35,6 +35,13 @@ endif
 ifeq ($(WITH_CLEVELDB),yes)
   build_tags += gcc
 endif
+
+ifeq ($(WITH_ROCKSDB),yes)
+  CGO_ENABLED=1
+  build_tags += rocksdb
+  VERSION_FLAGS += -X github.com/cosmos/cosmos-sdk/types.DBBackend=rocksdb
+endif
+
 build_tags += $(BUILD_TAGS)
 build_tags := $(strip $(build_tags))
 whitespace :=
